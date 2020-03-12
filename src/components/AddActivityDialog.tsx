@@ -5,23 +5,21 @@ import Dialog from '@material-ui/core/Dialog';
 import DialogActions from '@material-ui/core/DialogActions';
 import DialogContent from '@material-ui/core/DialogContent';
 import DialogTitle from '@material-ui/core/DialogTitle';
-import { Typography } from '@material-ui/core';
+import { IActivityInput } from '../types';
 
 interface AddActivityDialogProps {
   open: boolean;
+  setList: (input: IActivityInput) => void;
   handleClose: () => void;
 }
 
-const AddActivityDialog: React.FC<AddActivityDialogProps> = ({ open, handleClose }) => {
+const AddActivityDialog: React.FC<AddActivityDialogProps> = ({ open, setList, handleClose }) => {
   const [inputValue, setInputValue] = React.useState('');
 
   return (
     <Dialog open={open} onClose={handleClose} maxWidth='sm' fullWidth aria-labelledby="form-dialog-title">
       <DialogTitle id="form-dialog-title">
         Add Activity 
-        <Typography variant='subtitle1' component='span'>
-          {` *<number> [hr | hrs] #<tag> <activities>`}
-        </Typography>
       </DialogTitle>
       <DialogContent>
         <TextField
@@ -29,6 +27,7 @@ const AddActivityDialog: React.FC<AddActivityDialogProps> = ({ open, handleClose
           margin="dense"
           id="name"
           label="Enter Activity"
+          placeholder="<number> [hr | hrs] #<tag> <activities>"
           type="text"
           onChange={(event) => setInputValue(event.target.value)}
           fullWidth
@@ -40,19 +39,13 @@ const AddActivityDialog: React.FC<AddActivityDialogProps> = ({ open, handleClose
         </Button>
         <Button onClick={() => {
           handleClose();
-          console.log('add', parseInputValue(inputValue))
+          setList(parseInputValue(inputValue));
         }} color="primary">
           Add
         </Button>
       </DialogActions>
     </Dialog>
   );
-}
-
-interface IActivityInput {
-  duration: number;
-  tag: string;
-  activityName: string;
 }
 
 function parseInputValue(input: string): IActivityInput {
@@ -75,14 +68,14 @@ function parseInputValue(input: string): IActivityInput {
         count++;
       }
     } else if (count === 2) {
-      activityName += word;
+      activityName += word + " ";
     }
   });
 
   return {
     duration: Number(duration),
     tag,
-    activityName
+    activityName: activityName.trimEnd(),
   } 
 }
 

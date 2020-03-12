@@ -5,6 +5,7 @@ import Typography from '@material-ui/core/Typography';
 import Button from '@material-ui/core/Button';
 import { createStyles, makeStyles, Theme } from '@material-ui/core/styles';
 import AddActivityDialog from './AddActivityDialog';
+import { IActivityInput } from '../types';
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -20,8 +21,13 @@ const useStyles = makeStyles((theme: Theme) =>
   }),
 );
 
-const ToolbarComponent: React.FC = () => {
+interface IToolbarProps {
+  setList: (input: IActivityInput) => void;
+}
+
+const ToolbarComponent: React.FC<IToolbarProps> = ({ setList }) => {
   const [openAddDialog, setOpenAddDialog] = React.useState(false);
+
 
   const handleClickOpen = () => {
     setOpenAddDialog(true);
@@ -42,7 +48,11 @@ const ToolbarComponent: React.FC = () => {
           <Button color="inherit" onClick={handleClickOpen}>Add Activity</Button>
         </Toolbar>
       </AppBar>
-      <AddActivityDialog open={openAddDialog} handleClose={() => handleClose()} />
+      <AddActivityDialog 
+        open={openAddDialog} 
+        handleClose={() => handleClose()} 
+        setList={setList}
+      />
     </div>
   )
 };
