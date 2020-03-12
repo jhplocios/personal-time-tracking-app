@@ -12,7 +12,7 @@ function App() {
   return (
     <Router>
       <Switch>
-        <Route path="/personal-time-tracker">
+        <Route exact path="/personal-time-tracker">
           <MainView />
         </Route>
         <Route path="/" render={() => <Redirect to='/personal-time-tracker' />} />

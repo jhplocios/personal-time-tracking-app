@@ -3,6 +3,11 @@ import Toolbar from '../components/ToolbarComponent';
 import ContentList from '../components/ContentList/ContentListComponent';
 import { IActivityData } from '../types';
 import styled from 'styled-components';
+import Tabs from '@material-ui/core/Tabs';
+import Tab from '@material-ui/core/Tab';
+import FormatListNumberedIcon from '@material-ui/icons/FormatListNumbered';
+import EqualizerIcon from '@material-ui/icons/Equalizer';
+import ChartsView from './ChartsView';
 
 const ContentContainer = styled.div`
   padding: 20px;
@@ -11,6 +16,12 @@ const ContentContainer = styled.div`
 
 const MainView: React.FC = () => {
   const [activityList, setActivityList] = React.useState<IActivityData[] | undefined>(undefined)
+  const [value, setValue] = React.useState(0);
+  const [renderView, setRenderView] = React.useState('list');
+
+  const handleChange = (event: React.ChangeEvent<{}>, newValue: number) => {
+    setValue(newValue);
+  };
 
   const handleSetList = (input: IActivityData) => {
       setActivityList(prevState => {
@@ -37,13 +48,26 @@ const MainView: React.FC = () => {
       return prevState;
     })
   }
-
   return (
     <React.Fragment>
       <Toolbar setList={handleSetList}/>
-      <ContentContainer>
-        <ContentList activityList={activityList || []} setList={deleteFromList} />
-      </ContentContainer>
+      <Tabs
+        value={value}
+        onChange={handleChange}
+        variant="fullWidth"
+        indicatorColor="primary"
+        textColor="primary"
+        aria-label="icon tabs example"
+      > 
+        <Tab icon={<FormatListNumberedIcon />} aria-label="activity-list" onClick={() => setRenderView('list')} />
+        <Tab icon={<EqualizerIcon />} aria-label="charts" onClick={() => setRenderView('charts')} />
+      </Tabs>
+      {renderView === 'list' && (
+        <ContentContainer>
+          <ContentList activityList={activityList || []} setList={deleteFromList} />
+        </ContentContainer>
+      )}
+      {renderView === 'charts' && <ChartsView activityList={activityList || []}/>}     
     </React.Fragment>
   )
 };
