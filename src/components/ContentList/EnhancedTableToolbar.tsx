@@ -30,31 +30,36 @@ const useToolbarStyles = makeStyles((theme: Theme) =>
 );
 
 interface EnhancedTableToolbarProps {
-  numSelected: number;
+  selected: number[];
+  onDelete: () => void;
+  setList: (ids: number[]) => void;
 }
 
 const EnhancedTableToolbar = (props: EnhancedTableToolbarProps) => {
   const classes = useToolbarStyles();
-  const { numSelected } = props;
+  const { selected, setList, onDelete } = props;
 
   return (
     <Toolbar
       className={clsx(classes.root, {
-        [classes.highlight]: numSelected > 0,
+        [classes.highlight]: selected.length > 0,
       })}
     >
-      {numSelected > 0 ? (
+      {selected.length > 0 ? (
         <Typography className={classes.title} color="inherit" variant="subtitle1">
-          {numSelected} selected
+          {selected.length} selected
         </Typography>
       ) : (
         <Typography className={classes.title} variant="h6" id="tableTitle">
           Activities
         </Typography>
       )}
-      {numSelected > 0 && (
+      {selected.length > 0 && (
         <Tooltip title="Delete">
-          <IconButton aria-label="delete">
+          <IconButton aria-label="delete" onClick={() => {
+            onDelete();
+            setList(selected);
+          }}>
             <DeleteIcon />
           </IconButton>
         </Tooltip>

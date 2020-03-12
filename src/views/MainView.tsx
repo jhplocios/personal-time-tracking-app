@@ -1,7 +1,7 @@
 import React from 'react';
 import Toolbar from '../components/ToolbarComponent';
 import ContentList from '../components/ContentList/ContentListComponent';
-import { IActivityInput } from '../types';
+import { IActivityData } from '../types';
 import styled from 'styled-components';
 
 const ContentContainer = styled.div`
@@ -10,9 +10,9 @@ const ContentContainer = styled.div`
 `;
 
 const MainView: React.FC = () => {
-  const [activityList, setActivityList] = React.useState<IActivityInput[] | undefined>(undefined)
+  const [activityList, setActivityList] = React.useState<IActivityData[] | undefined>(undefined)
 
-  const handleSetList = (input: IActivityInput) => {
+  const handleSetList = (input: IActivityData) => {
       setActivityList(prevState => {
         if (prevState) {
           return [...prevState, input];
@@ -21,12 +21,29 @@ const MainView: React.FC = () => {
       })
   }
 
-  console.log(activityList)
+  const deleteFromList = (ids: number[]) => {
+    setActivityList(prevState => {
+      if (prevState) {
+        let newList: IActivityData[] = [];
+        ids.forEach(id => {
+          const deleteIndex = prevState.findIndex(state => state.id === id);
+          newList = [
+            ...prevState.slice(0, deleteIndex),
+            ...prevState.slice(deleteIndex + 1)
+          ]
+        })
+
+        return newList;
+      }
+      return prevState;
+    })
+  }
+
   return (
     <React.Fragment>
       <Toolbar setList={handleSetList}/>
       <ContentContainer>
-        <ContentList activityList={activityList || []} />
+        <ContentList activityList={activityList || []} setList={deleteFromList} />
       </ContentContainer>
     </React.Fragment>
   )

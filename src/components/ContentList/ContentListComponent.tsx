@@ -71,13 +71,14 @@ const useStyles = makeStyles((theme: Theme) =>
 
 interface IContentListProps {
   activityList: IActivityData[];
+  setList: (ids: number[]) => void;
 }
 
-const ContentListComponent: React.FC<IContentListProps> = ({ activityList }) => {
+const ContentListComponent: React.FC<IContentListProps> = ({ activityList, setList }) => {
   const classes = useStyles();
   const [order, setOrder] = React.useState<Order>('asc');
   const [orderBy, setOrderBy] = React.useState<keyof IActivityData>('activityName');
-  const [selected, setSelected] = React.useState<string[]>([]);
+  const [selected, setSelected] = React.useState<number[]>([]);
   const [page, setPage] = React.useState(0);
   const [rowsPerPage, setRowsPerPage] = React.useState(10);
 
@@ -89,19 +90,19 @@ const ContentListComponent: React.FC<IContentListProps> = ({ activityList }) => 
 
   const handleSelectAllClick = (event: React.ChangeEvent<HTMLInputElement>) => {
     if (event.target.checked) {
-      const newSelecteds = activityList.map(n => n.activityName);
+      const newSelecteds = activityList.map(n => n.id);
       setSelected(newSelecteds);
       return;
     }
     setSelected([]);
   };
 
-  const handleClick = (event: React.MouseEvent<unknown>, name: string) => {
-    const selectedIndex = selected.indexOf(name);
-    let newSelected: string[] = [];
+  const handleClick = (event: React.MouseEvent<unknown>, id: number) => {
+    const selectedIndex = selected.indexOf(id);
+    let newSelected: number[] = [];
 
     if (selectedIndex === -1) {
-      newSelected = newSelected.concat(selected, name);
+      newSelected = newSelected.concat(selected, id);
     } else if (selectedIndex === 0) {
       newSelected = newSelected.concat(selected.slice(1));
     } else if (selectedIndex === selected.length - 1) {
@@ -125,14 +126,14 @@ const ContentListComponent: React.FC<IContentListProps> = ({ activityList }) => 
     setPage(0);
   };
 
-  const isSelected = (name: string) => selected.indexOf(name) !== -1;
+  const isSelected = (id: number) => selected.indexOf(id) !== -1;
 
   const emptyRows = rowsPerPage - Math.min(rowsPerPage, activityList.length - page * rowsPerPage);
 
   return (
     <div className={classes.root}>
       <Paper className={classes.paper}>
-        <EnhancedTableToolbar numSelected={selected.length} />
+        <EnhancedTableToolbar selected={selected} onDelete={() => setSelected([])} setList={setList}/>
         <TableContainer>
           <Table
             className={classes.table}
@@ -153,17 +154,17 @@ const ContentListComponent: React.FC<IContentListProps> = ({ activityList }) => 
               {stableSort(activityList, getComparator(order, orderBy))
                 .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
                 .map((activity, index) => {
-                  const isItemSelected = isSelected(activity.activityName);
+                  const isItemSelected = isSelected(activity.id);
                   const labelId = `enhanced-table-checkbox-${index}`;
 
                   return (
                     <TableRow
                       hover
-                      onClick={event => handleClick(event, activity.activityName)}
+                      onClick={event => handleClick(event, activity.id)}
                       role="checkbox"
                       aria-checked={isItemSelected}
                       tabIndex={-1}
-                      key={activity.activityName}
+                      key={activity.id}
                       selected={isItemSelected}
                     >
                       <TableCell padding="checkbox">

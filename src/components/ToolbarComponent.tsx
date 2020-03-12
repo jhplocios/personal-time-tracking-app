@@ -5,7 +5,7 @@ import Typography from '@material-ui/core/Typography';
 import Button from '@material-ui/core/Button';
 import { createStyles, makeStyles, Theme } from '@material-ui/core/styles';
 import AddActivityDialog from './AddActivityDialog';
-import { IActivityInput } from '../types';
+import { IActivityData } from '../types';
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -22,7 +22,7 @@ const useStyles = makeStyles((theme: Theme) =>
 );
 
 interface IToolbarProps {
-  setList: (input: IActivityInput) => void;
+  setList: (input: IActivityData) => void;
 }
 
 const ToolbarComponent: React.FC<IToolbarProps> = ({ setList }) => {

@@ -5,11 +5,11 @@ import Dialog from '@material-ui/core/Dialog';
 import DialogActions from '@material-ui/core/DialogActions';
 import DialogContent from '@material-ui/core/DialogContent';
 import DialogTitle from '@material-ui/core/DialogTitle';
-import { IActivityInput } from '../types';
+import { IActivityData } from '../types';
 
 interface AddActivityDialogProps {
   open: boolean;
-  setList: (input: IActivityInput) => void;
+  setList: (input: IActivityData) => void;
   handleClose: () => void;
 }
 
@@ -48,7 +48,7 @@ const AddActivityDialog: React.FC<AddActivityDialogProps> = ({ open, setList, ha
   );
 }
 
-function parseInputValue(input: string): IActivityInput {
+function parseInputValue(input: string): IActivityData {
   const temp = input.split(" ");
   let count = 0;
   let duration = '';
@@ -73,6 +73,7 @@ function parseInputValue(input: string): IActivityInput {
   });
 
   return {
+    id: Math.random(),
     duration: Number(duration),
     tag,
     activityName: activityName.trimEnd(),
