@@ -3,6 +3,7 @@ export interface IActivityData {
   duration: number;
   tag: string;
   activityName: string;
+  date: Date;
 }
 
 export interface IActivityInput {

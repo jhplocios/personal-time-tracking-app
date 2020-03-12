@@ -81,6 +81,13 @@ const ContentListComponent: React.FC<IContentListProps> = ({ activityList, setLi
   const [selected, setSelected] = React.useState<number[]>([]);
   const [page, setPage] = React.useState(0);
   const [rowsPerPage, setRowsPerPage] = React.useState(10);
+  const [selectedDate, setSelectedDate] = React.useState<Date | null>(
+    new Date(),
+  );
+
+  const handleDateChange = (date: Date | null) => {
+    setSelectedDate(date);
+  };
 
   const handleRequestSort = (event: React.MouseEvent<unknown>, property: keyof IActivityData) => {
     const isAsc = orderBy === property && order === 'asc';
@@ -133,7 +140,13 @@ const ContentListComponent: React.FC<IContentListProps> = ({ activityList, setLi
   return (
     <div className={classes.root}>
       <Paper className={classes.paper}>
-        <EnhancedTableToolbar selected={selected} onDelete={() => setSelected([])} setList={setList}/>
+        <EnhancedTableToolbar 
+          selectedIds={selected} 
+          onDelete={() => setSelected([])} 
+          setList={setList}
+          selectedDate={selectedDate}
+          handleDateChange={(date: Date | null) => handleDateChange(date)}
+        />
         <TableContainer>
           <Table
             className={classes.table}
@@ -151,7 +164,13 @@ const ContentListComponent: React.FC<IContentListProps> = ({ activityList, setLi
               rowCount={activityList.length}
             />
             <TableBody>
-              {stableSort(activityList, getComparator(order, orderBy))
+              {stableSort<any>(activityList, getComparator(order, orderBy))
+                .filter(activity => {
+                  if (selectedDate) {
+                    return activity.date.toDateString() === selectedDate.toDateString()                
+                  }
+                  return false;
+                })
                 .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
                 .map((activity, index) => {
                   const isItemSelected = isSelected(activity.id);

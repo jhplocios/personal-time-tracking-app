@@ -6,6 +6,13 @@ import Typography from '@material-ui/core/Typography';
 import IconButton from '@material-ui/core/IconButton';
 import Tooltip from '@material-ui/core/Tooltip';
 import DeleteIcon from '@material-ui/icons/Delete';
+import styled from 'styled-components';
+import DateInput from '../DateInputComponent';
+
+const SubHeaderContainer = styled.div`
+  display: flex;
+  align-items: baseline;
+`
 
 const useToolbarStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -30,35 +37,40 @@ const useToolbarStyles = makeStyles((theme: Theme) =>
 );
 
 interface EnhancedTableToolbarProps {
-  selected: number[];
+  selectedIds: number[];
+  selectedDate: Date | null;
   onDelete: () => void;
   setList: (ids: number[]) => void;
+  handleDateChange: (date: Date | null) => void;
 }
 
 const EnhancedTableToolbar = (props: EnhancedTableToolbarProps) => {
   const classes = useToolbarStyles();
-  const { selected, setList, onDelete } = props;
+  const { selectedIds, setList, onDelete, selectedDate, handleDateChange } = props;
 
   return (
     <Toolbar
       className={clsx(classes.root, {
-        [classes.highlight]: selected.length > 0,
+        [classes.highlight]: selectedIds.length > 0,
       })}
     >
-      {selected.length > 0 ? (
+      {selectedIds.length > 0 ? (
         <Typography className={classes.title} color="inherit" variant="subtitle1">
-          {selected.length} selected
+          {selectedIds.length} selected
         </Typography>
       ) : (
-        <Typography className={classes.title} variant="h6" id="tableTitle">
-          Activities
-        </Typography>
+        <SubHeaderContainer>
+          <Typography className={classes.title} variant="h6" id="tableTitle">
+            Activities on
+          </Typography>
+          <DateInput selectedDate={selectedDate} handleDateChange={handleDateChange} />
+        </SubHeaderContainer>
       )}
-      {selected.length > 0 && (
+      {selectedIds.length > 0 && (
         <Tooltip title="Delete">
           <IconButton aria-label="delete" onClick={() => {
             onDelete();
-            setList(selected);
+            setList(selectedIds);
           }}>
             <DeleteIcon />
           </IconButton>

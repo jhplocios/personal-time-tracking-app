@@ -5,6 +5,7 @@ import Dialog from '@material-ui/core/Dialog';
 import DialogActions from '@material-ui/core/DialogActions';
 import DialogContent from '@material-ui/core/DialogContent';
 import DialogTitle from '@material-ui/core/DialogTitle';
+import DateInput from './DateInputComponent';
 import { IActivityData } from '../types';
 
 interface AddActivityDialogProps {
@@ -15,13 +16,30 @@ interface AddActivityDialogProps {
 
 const AddActivityDialog: React.FC<AddActivityDialogProps> = ({ open, setList, handleClose }) => {
   const [inputValue, setInputValue] = React.useState('');
+  const [selectedDate, setSelectedDate] = React.useState<Date | null>(
+    new Date(),
+  );
 
+  const handleDateChange = (date: Date | null) => {
+    setSelectedDate(date);
+  };
+  // const [isValid, setIsValid] = React.useState(false);
+
+  // React.useEffect(() => {
+  //   const regex = RegExp('\d*\u002e{0,1}\d*) (hr|hrs) #(\w*|\d*) (\w*|\d*|\s){1,}', 'g');
+  //   //setIsValid(!!inputValue.matchAll(regex);
+  //   const match = inputValue.matchAll(regex);
+  //   console.log(match)
+  // }, [inputValue])
+  
+  // console.log(isValid)
   return (
     <Dialog open={open} onClose={handleClose} maxWidth='sm' fullWidth aria-labelledby="form-dialog-title">
       <DialogTitle id="form-dialog-title">
         Add Activity 
       </DialogTitle>
       <DialogContent>
+        <DateInput selectedDate={selectedDate} handleDateChange={handleDateChange} /> 
         <TextField
           autoFocus
           margin="dense"
@@ -31,6 +49,7 @@ const AddActivityDialog: React.FC<AddActivityDialogProps> = ({ open, setList, ha
           type="text"
           onChange={(event) => setInputValue(event.target.value)}
           fullWidth
+          //error={isValid}
         />
       </DialogContent>
       <DialogActions>
@@ -39,7 +58,7 @@ const AddActivityDialog: React.FC<AddActivityDialogProps> = ({ open, setList, ha
         </Button>
         <Button onClick={() => {
           handleClose();
-          setList(parseInputValue(inputValue));
+          setList(parseInputValue(inputValue, selectedDate));
         }} color="primary">
           Add
         </Button>
@@ -48,7 +67,7 @@ const AddActivityDialog: React.FC<AddActivityDialogProps> = ({ open, setList, ha
   );
 }
 
-function parseInputValue(input: string): IActivityData {
+function parseInputValue(input: string, date: Date | null): IActivityData {
   const temp = input.split(" ");
   let count = 0;
   let duration = '';
@@ -77,6 +96,7 @@ function parseInputValue(input: string): IActivityData {
     duration: Number(duration),
     tag,
     activityName: activityName.trimEnd(),
+    date: date || new Date(),
   } 
 }
 
