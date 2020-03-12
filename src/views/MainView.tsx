@@ -24,15 +24,14 @@ const MainView: React.FC = () => {
   const deleteFromList = (ids: number[]) => {
     setActivityList(prevState => {
       if (prevState) {
-        let newList: IActivityData[] = [];
+        let newList: IActivityData[] = prevState;
         ids.forEach(id => {
-          const deleteIndex = prevState.findIndex(state => state.id === id);
+          const deleteIndex = newList.findIndex(state => state.id === id);
           newList = [
-            ...prevState.slice(0, deleteIndex),
-            ...prevState.slice(deleteIndex + 1)
+            ...newList.slice(0, deleteIndex),
+            ...newList.slice(deleteIndex + 1)
           ]
         })
-
         return newList;
       }
       return prevState;
