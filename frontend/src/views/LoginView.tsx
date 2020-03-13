@@ -2,6 +2,7 @@ import React from 'react';
 import styled from 'styled-components';
 import Toolbar from '../components/ToolbarComponent';
 import LoginForm from '../components/LoginFormComponent';
+import SigninForm from '../components/SigninFormComponent';
 
 const Container = styled.div`
   width: 100vw;
@@ -15,13 +16,17 @@ const FormContainer = styled.div`
   width: 100%;
   height: calc(100vh - 64px);
 `
-const LoginView: React.FC = () => (
-  <Container>
-    <Toolbar isLoggedOut />
-    <FormContainer>
-      <LoginForm />
-    </FormContainer>
-  </Container>
-);
+const LoginView: React.FC = () => {
+  const [isNewUser, setIsNewUser] = React.useState(false);
+
+  return (
+    <Container>
+      <Toolbar isNewUser={isNewUser} setUser={() => setIsNewUser(!isNewUser)} isLoggedOut />
+      <FormContainer>
+        {isNewUser ? <SigninForm /> : <LoginForm />}
+      </FormContainer>
+    </Container>
+  )
+};
 
 export default LoginView;

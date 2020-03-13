@@ -23,10 +23,12 @@ const useStyles = makeStyles((theme: Theme) =>
 );
 
 interface IToolbarProps {
+  isNewUser?: boolean;
   isLoggedOut?: boolean;
+  setUser?: () => void;
 }
 
-const ToolbarComponent: React.FC<IToolbarProps> = ({ isLoggedOut }) => {
+const ToolbarComponent: React.FC<IToolbarProps> = ({ isLoggedOut, setUser, isNewUser }) => {
   const [openAddDialog, setOpenAddDialog] = React.useState(false);
   let history = useHistory();
 
@@ -50,16 +52,20 @@ const ToolbarComponent: React.FC<IToolbarProps> = ({ isLoggedOut }) => {
   }
 
   const classes = useStyles();
+  const userFirstName = localStorage.getItem('firstName'); 
 
   return (
     <div className={classes.root}>
       <AppBar position="static">
         <Toolbar>
           <Typography variant="h6" className={classes.title}>
-            Personal Time Tracker App
+            {userFirstName ? `Welcome ${userFirstName}!` : 'Personal Time Tracker App'}
           </Typography>
           {!isLoggedOut && <Button color="inherit" onClick={handleClickOpen}>Add Activity</Button>}
-          {isLoggedOut && <Button color="inherit">Sign up</Button>}
+          {isLoggedOut && 
+            <Button color="inherit" onClick={() => setUser && setUser()}>
+              {!isNewUser ? 'Sign in' : ' Log in'}
+            </Button>}
           {!isLoggedOut && <Button color="inherit" onClick={handleLogOut}>Log out</Button>}
         </Toolbar>
       </AppBar>

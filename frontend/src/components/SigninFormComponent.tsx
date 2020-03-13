@@ -15,16 +15,23 @@ const StyledTextField = styled(TextField)`
   margin-bottom: 10px;
 `
 
-const LoginFormComponent: React.FC = () => {
+const SigninFormComponent: React.FC = () => {
   let history = useHistory();
+  const [firstNameInput, setfirstNameInput] = React.useState('');
+  const [lastNameInput, setLastNameInput] = React.useState('');
+  const [roleInput, setRoleInput] = React.useState('');
   const [emailInput, setEmailInput] = React.useState('');
   const [passwordInput, setPasswordInput] = React.useState('');
 
-  const handleLogIn = () => {
-    API.post('/user/login', { email: emailInput, password: passwordInput })
-      .then(res => {
+  const handleSignIn = () => {
+    API.post('/user', {
+      firstName: firstNameInput,
+      lastName: lastNameInput,
+      role: roleInput, 
+      email: emailInput, 
+      password: passwordInput 
+    }).then(res => {
         if (res.data) {
-          console.log(res.data)
           localStorage.setItem('token', res.data.token);
           localStorage.setItem('firstName', res.data.user.firstName);
           localStorage.setItem('userId', res.data.user._id);
@@ -32,10 +39,34 @@ const LoginFormComponent: React.FC = () => {
       })
       .catch(err => console.log(err))
     setTimeout(() => history.push("/personal-time-tracker"), 1000);
-  };
+  }
 
   return (
     <Card>
+      <StyledTextField
+        onChange={(event) => setfirstNameInput(event.target.value)}
+        required
+        id="outlined-required"
+        placeholder="First Name"
+        variant="outlined"
+        fullWidth
+      />
+      <StyledTextField
+        onChange={(event) => setLastNameInput(event.target.value)}
+        required
+        id="outlined-required"
+        placeholder="Last Name"
+        variant="outlined"
+        fullWidth
+      />
+      <StyledTextField
+        onChange={(event) => setRoleInput(event.target.value)}
+        required
+        id="outlined-required"
+        placeholder="Role"
+        variant="outlined"
+        fullWidth
+      />
       <StyledTextField
         onChange={(event) => setEmailInput(event.target.value)}
         required
@@ -58,12 +89,12 @@ const LoginFormComponent: React.FC = () => {
       <Button 
         variant="contained"
         color="primary"
-        onClick={handleLogIn} 
+        onClick={handleSignIn} 
       >
-        Log In
+        Sign In
       </Button>
     </Card>
   )
 };
 
-export default LoginFormComponent;
+export default SigninFormComponent;
