@@ -2,11 +2,12 @@ require('dotenv').config;
 
 const express = require("express");
 const mongoose = require("mongoose");
+const cors = require("cors");
 
 const DATABASE_URI = "mongodb+srv://ThinkingMachinesUser:thinkingmachines@personaltimetrackerapp-hod0s.gcp.mongodb.net/test?retryWrites=true&w=majority";
-const DATABASE_NAME = "activity-tracker";
 
 const app = express();
+app.use(cors());
 app.use(express.json());
 
 mongoose.connect(DATABASE_URI, { useNewUrlParser: true, useUnifiedTopology: true })

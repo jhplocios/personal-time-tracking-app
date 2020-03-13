@@ -6,19 +6,21 @@ import DialogActions from '@material-ui/core/DialogActions';
 import DialogContent from '@material-ui/core/DialogContent';
 import DialogTitle from '@material-ui/core/DialogTitle';
 import DateInput from './DateInputComponent';
+import API from '../utils/api';
 import { IActivityData } from '../types';
+import { useHistory } from "react-router-dom";
 
 interface AddActivityDialogProps {
   open: boolean;
-  setList: (input: Partial<IActivityData>) => void;
   handleClose: () => void;
 }
 
-const AddActivityDialog: React.FC<AddActivityDialogProps> = ({ open, setList, handleClose }) => {
+const AddActivityDialog: React.FC<AddActivityDialogProps> = ({ open, handleClose }) => {
   const [inputValue, setInputValue] = React.useState('');
   const [selectedDate, setSelectedDate] = React.useState<Date | null>(
     new Date(),
   );
+  let history = useHistory();
 
   const handleDateChange = (date: Date | null) => {
     setSelectedDate(date);
@@ -58,7 +60,8 @@ const AddActivityDialog: React.FC<AddActivityDialogProps> = ({ open, setList, ha
         </Button>
         <Button onClick={() => {
           handleClose();
-          setList(parseInputValue(inputValue, selectedDate ? selectedDate.toString() : ''));
+          API.post('/activity', parseInputValue(inputValue, selectedDate ? selectedDate.toString() : ''));
+          setTimeout(() => history.push("/"), 300);
         }} color="primary">
           Add
         </Button>

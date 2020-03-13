@@ -51,7 +51,6 @@ const ToolbarComponent: React.FC<IToolbarProps> = ({ setList }) => {
       <AddActivityDialog 
         open={openAddDialog} 
         handleClose={() => handleClose()} 
-        setList={setList}
       />
     </div>
   )

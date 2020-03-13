@@ -83,7 +83,7 @@ const ChartsView: React.FC<IChartsView> = ({ activityList }) => {
             ))}
           </TagContainer>
           <PieChart 
-            title='Activity Tracker' 
+            title={`#${selectedTag}`} 
             data={reducedTagObject[selectedTag] || []} 
           />
         </React.Fragment>

@@ -8,6 +8,8 @@ import Tooltip from '@material-ui/core/Tooltip';
 import DeleteIcon from '@material-ui/icons/Delete';
 import styled from 'styled-components';
 import DateInput from '../DateInputComponent';
+import API from '../../utils/api';
+import { useHistory } from "react-router-dom";
 
 const SubHeaderContainer = styled.div`
   display: flex;
@@ -37,26 +39,25 @@ const useToolbarStyles = makeStyles((theme: Theme) =>
 );
 
 interface EnhancedTableToolbarProps {
-  selectedIds: string[];
+  selectedId: string;
   selectedDate: Date | null;
-  onDelete: () => void;
-  setList: (ids: string[]) => void;
   handleDateChange: (date: Date | null) => void;
 }
 
 const EnhancedTableToolbar = (props: EnhancedTableToolbarProps) => {
+  let history = useHistory();
   const classes = useToolbarStyles();
-  const { selectedIds, setList, onDelete, selectedDate, handleDateChange } = props;
+  const { selectedId, selectedDate, handleDateChange } = props;
 
   return (
     <Toolbar
       className={clsx(classes.root, {
-        [classes.highlight]: selectedIds.length > 0,
+        [classes.highlight]: !!selectedId,
       })}
     >
-      {selectedIds.length > 0 ? (
+      {!!selectedId ? (
         <Typography className={classes.title} color="inherit" variant="subtitle1">
-          {selectedIds.length} selected
+          1 selected
         </Typography>
       ) : (
         <SubHeaderContainer>
@@ -66,11 +67,11 @@ const EnhancedTableToolbar = (props: EnhancedTableToolbarProps) => {
           <DateInput selectedDate={selectedDate} handleDateChange={handleDateChange} />
         </SubHeaderContainer>
       )}
-      {selectedIds.length > 0 && (
+      {!!selectedId && (
         <Tooltip title="Delete">
           <IconButton aria-label="delete" onClick={() => {
-            onDelete();
-            setList(selectedIds);
+            API.delete(`/activity/${selectedId}`);
+            setTimeout(() => history.push("/"), 200);
           }}>
             <DeleteIcon />
           </IconButton>

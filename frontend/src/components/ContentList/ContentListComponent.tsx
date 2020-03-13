@@ -72,14 +72,14 @@ const useStyles = makeStyles((theme: Theme) =>
 
 interface IContentListProps {
   activityList: Partial<IActivityData>[];
-  setList: (ids: string[]) => void;
+  setList: (id: string) => void;
 }
 
 const ContentListComponent: React.FC<IContentListProps> = ({ activityList, setList }) => {
   const classes = useStyles();
   const [order, setOrder] = React.useState<Order>('asc');
   const [orderBy, setOrderBy] = React.useState<keyof IActivityData>('name');
-  const [selected, setSelected] = React.useState<string[]>([]);
+  const [selected, setSelected] = React.useState<string>('');
   const [page, setPage] = React.useState(0);
   const [rowsPerPage, setRowsPerPage] = React.useState(10);
   const [selectedDate, setSelectedDate] = React.useState<Date | null>(
@@ -96,33 +96,33 @@ const ContentListComponent: React.FC<IContentListProps> = ({ activityList, setLi
     setOrderBy(property);
   };
 
-  const handleSelectAllClick = (event: React.ChangeEvent<HTMLInputElement>) => {
-    if (event.target.checked) {
-      const newSelecteds = activityList.map(n => n._id as string);
-      setSelected(newSelecteds);
-      return;
-    }
-    setSelected([]);
-  };
+  // const handleSelectAllClick = (event: React.ChangeEvent<HTMLInputElement>) => {
+  //   if (event.target.checked) {
+  //     const newSelecteds = activityList.map(n => n._id as string);
+  //     setSelected(newSelecteds);
+  //     return;
+  //   }
+  //   setSelected([]);
+  // };
 
   const handleClick = (event: React.MouseEvent<unknown>, id: string) => {
-    const selectedIndex = selected.indexOf(id);
-    let newSelected: string[] = [];
+    // const selectedIndex = selected.indexOf(id);
+    // let newSelected: string[] = [];
 
-    if (selectedIndex === -1) {
-      newSelected = newSelected.concat(selected, id);
-    } else if (selectedIndex === 0) {
-      newSelected = newSelected.concat(selected.slice(1));
-    } else if (selectedIndex === selected.length - 1) {
-      newSelected = newSelected.concat(selected.slice(0, -1));
-    } else if (selectedIndex > 0) {
-      newSelected = newSelected.concat(
-        selected.slice(0, selectedIndex),
-        selected.slice(selectedIndex + 1),
-      );
-    }
+    // if (selectedIndex === -1) {
+    //   newSelected = newSelected.concat(selected, id);
+    // } else if (selectedIndex === 0) {
+    //   newSelected = newSelected.concat(selected.slice(1));
+    // } else if (selectedIndex === selected.length - 1) {
+    //   newSelected = newSelected.concat(selected.slice(0, -1));
+    // } else if (selectedIndex > 0) {
+    //   newSelected = newSelected.concat(
+    //     selected.slice(0, selectedIndex),
+    //     selected.slice(selectedIndex + 1),
+    //   );
+    // }
 
-    setSelected(newSelected);
+    setSelected(id);
   };
 
   const handleChangePage = (event: unknown, newPage: number) => {
@@ -150,9 +150,7 @@ const ContentListComponent: React.FC<IContentListProps> = ({ activityList, setLi
     <div className={classes.root}>
       <Paper className={classes.paper}>
         <EnhancedTableToolbar 
-          selectedIds={selected} 
-          onDelete={() => setSelected([])} 
-          setList={setList}
+          selectedId={selected} 
           selectedDate={selectedDate}
           handleDateChange={(date: Date | null) => handleDateChange(date)}
         />
@@ -171,7 +169,6 @@ const ContentListComponent: React.FC<IContentListProps> = ({ activityList, setLi
                     numSelected={selected.length}
                     order={order}
                     orderBy={orderBy}
-                    onSelectAllClick={handleSelectAllClick}
                     onRequestSort={handleRequestSort}
                     rowCount={activityList.length}
                   />
