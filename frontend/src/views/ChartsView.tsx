@@ -35,22 +35,41 @@ const ChartsView: React.FC<IChartsView> = ({ activityList }) => {
     }
   }, [activityList])
 
-  const reducedTagList = activityList.reduce((acc: any, cur) => {
+  const reducedTagObject = activityList.reduce((acc: any, cur) => {
     if (!acc[cur.tag]) {
-      acc[cur.tag] = cur.duration;
+      acc[cur.tag] = [{
+        id: cur.id,
+        duration: cur.duration,
+        tag: cur.tag,
+        activityName: cur.activityName,
+        date: cur.date
+      }];
       return acc;
     } else {
-      acc[cur.tag] += cur.duration;
+      const sameActivityIndex = acc[cur.tag].findIndex((a: IActivityData) => a.activityName === cur.activityName);
+      if (sameActivityIndex > -1) {
+        acc[cur.tag][sameActivityIndex].duration += cur.duration;
+      } else {
+        acc[cur.tag] = [
+          ...acc[cur.tag],
+          {
+            id: cur.id,
+            duration: cur.duration,
+            tag: cur.tag,
+            activityName: cur.activityName,
+            date: cur.date
+          }
+        ]
+      }
       return acc;
     }
   }, {})
 
-  console.log(reducedTagList)
   return (
     <ContentContainer>
       <TagContainer>
-        {Object.keys(reducedTagList).map(tag => (
-          <ChipContainer>
+        {Object.keys(reducedTagObject).map(tag => (
+          <ChipContainer key={tag}>
             <Chip 
               label={`#${tag}`} 
               color={selectedTag === tag ? 'primary' : 'default'} 
@@ -59,7 +78,10 @@ const ChartsView: React.FC<IChartsView> = ({ activityList }) => {
           </ChipContainer>
         ))}
       </TagContainer>
-      <PieChart title='Activity Tracker' data={activityList.filter(activity => activity.tag === selectedTag)} />
+      <PieChart 
+        title='Activity Tracker' 
+        data={reducedTagObject[selectedTag] || []} 
+      />
     </ContentContainer>  
   )
 }
