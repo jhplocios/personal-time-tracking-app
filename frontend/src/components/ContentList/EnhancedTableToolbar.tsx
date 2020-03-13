@@ -49,6 +49,15 @@ const EnhancedTableToolbar = (props: EnhancedTableToolbarProps) => {
   const classes = useToolbarStyles();
   const { selectedId, selectedDate, handleDateChange } = props;
 
+  const handleDelete = () => {
+    const jwtoken = localStorage.getItem('token')
+    const config = {
+      headers: { Authorization: `Bearer ${jwtoken}` }
+    }; 
+    API.delete(`/activity/${selectedId}`, config);
+    setTimeout(() => history.push("/"), 200);
+  }
+
   return (
     <Toolbar
       className={clsx(classes.root, {
@@ -69,10 +78,7 @@ const EnhancedTableToolbar = (props: EnhancedTableToolbarProps) => {
       )}
       {!!selectedId && (
         <Tooltip title="Delete">
-          <IconButton aria-label="delete" onClick={() => {
-            API.delete(`/activity/${selectedId}`);
-            setTimeout(() => history.push("/"), 200);
-          }}>
+          <IconButton aria-label="delete" onClick={handleDelete}>
             <DeleteIcon />
           </IconButton>
         </Tooltip>

@@ -66,7 +66,11 @@ const ContentListComponent: React.FC<IContentListProps> = ({ activityList }) => 
   };
 
   const handleClick = (event: React.MouseEvent<unknown>, id: string) => {
-    setSelected(id);
+    if (id === selected) {
+      setSelected('');
+    } else {
+      setSelected(id);
+    }
   };
 
   const handleChangePage = (event: unknown, newPage: number) => {

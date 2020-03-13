@@ -6,7 +6,6 @@ const router = express.Router();
 // Get all activities
 router.get('/list', auth, async (req, res) => {
   try {
-    // const userId = ObjectId(req.query.userId);
     const activities = await activityModel.find({})
     res.status(201).send(activities);
   } catch (error) {
@@ -38,10 +37,9 @@ router.patch('/:id', async (req, res) => {
 })
 
 // Delete one activity
-router.delete('/:id', async (req, res) => {
+router.delete('/:id', auth, async (req, res) => {
   try {
     const activity = await activityModel.findByIdAndDelete(req.params.id);
-
     if (!activity) res.status(404).send("No item found");
     res.status(200).send();
   } catch (error) {
