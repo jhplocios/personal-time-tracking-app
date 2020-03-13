@@ -20,4 +20,4 @@ To run the development, just follow these scripts:
   backend:
     - cd /backend
     - npm i
-    - npm run devStart
+    - npm run start

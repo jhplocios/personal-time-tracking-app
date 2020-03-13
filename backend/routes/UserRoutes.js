@@ -1,27 +1,50 @@
 const express = require('express');
 const userModel = require('../models/UserModel');
+const auth = require('../middleware/auth');
 const router = express.Router();
 
-// Get all users
-router.get('/list', async (req, res) => {
-  const users = await userModel.find({})
-
-  try {
-    res.send(users);
-  } catch (error) {
-    res.status(500).send(error);
-  }
+// View logged in user profile
+router.get('/me', auth, async(req, res) => {
+  res.send(req.user)
 })
 
 // Create one user
 router.post('/', async (req, res) => {
-  const user = new userModel(req.body);
-
   try {
+    const user = new userModel(req.body);
     await user.save();
-    res.send(user);
+    const token = await user.generateAuthToken();
+    res.status(201).send({ user, token });
   } catch (error) {
-    res.status(500).send(err);
+    res.status(400).send(err);
+  }
+})
+
+// Login a registered user
+router.post('/login', async (req, res) => {
+  try {
+    const { email, password } = req.body;
+    const user = await userModel.findByCredentials(email, password);
+    if (!user) {
+      return res.status(401).send({ error: 'Login failed! Check authentication credentials'})
+    }
+    const token = await user.generateAuthToken()
+    res.send({ user, token })
+  } catch (error) {
+    res.status(400).send(error)
+  }
+})
+
+// Log user out of the application
+router.post('/me/logout', auth, async (req, res) => {
+  try {
+    req.user.tokens = req.user.tokens.filter((token) => {
+        return token.token != req.token
+    })
+    await req.user.save()
+    res.send()
+  } catch (error) {
+    res.status(500).send(error)
   }
 })
 

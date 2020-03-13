@@ -1,13 +1,13 @@
 const express = require('express');
 const activityModel = require('../models/ActivitityModel');
+const auth = require('../middleware/auth');
 const router = express.Router();
 
 // Get all activities
-router.get('/list', async (req, res) => {
-  const activities = await activityModel.find({})
-
+router.get('/list', auth, async (req, res) => {
   try {
-    res.send(activities);
+    const activities = await activityModel.find({})
+    res.status(201).send(activities);
   } catch (error) {
     res.status(500).send(error);
   }
