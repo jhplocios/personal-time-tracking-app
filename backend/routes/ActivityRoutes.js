@@ -6,6 +6,7 @@ const router = express.Router();
 // Get all activities
 router.get('/list', auth, async (req, res) => {
   try {
+    // const userId = ObjectId(req.query.userId);
     const activities = await activityModel.find({})
     res.status(201).send(activities);
   } catch (error) {
@@ -14,10 +15,10 @@ router.get('/list', auth, async (req, res) => {
 })
 
 // Create one activity
-router.post('/', async (req, res) => {
-  const activity = new activityModel({...req.body, user: '5e6b6438c4b86b059b1ca507'});
-
+router.post('/', auth, async (req, res) => {
   try {
+    console.log(req.body)
+    const activity = new activityModel(req.body);
     await activity.save();
     res.send(activity);
   } catch (error) {

@@ -59,7 +59,7 @@ const ToolbarComponent: React.FC<IToolbarProps> = ({ isLoggedOut, setUser, isNew
       <AppBar position="static">
         <Toolbar>
           <Typography variant="h6" className={classes.title}>
-            {userFirstName ? `Welcome ${userFirstName}!` : 'Personal Time Tracker App'}
+            {userFirstName ? `Welcome back, ${userFirstName}!` : 'Personal Time Tracker App'}
           </Typography>
           {!isLoggedOut && <Button color="inherit" onClick={handleClickOpen}>Add Activity</Button>}
           {isLoggedOut && 

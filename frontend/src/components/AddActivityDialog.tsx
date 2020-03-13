@@ -26,6 +26,18 @@ const AddActivityDialog: React.FC<AddActivityDialogProps> = ({ open, handleClose
     setSelectedDate(date);
   };
 
+  const handleAddActivity = () => {
+    const jwtoken = localStorage.getItem('token')
+    const userId = localStorage.getItem('userId')
+    const config = {
+      headers: { Authorization: `Bearer ${jwtoken}` }
+    }; 
+    const parsedInput = fnParseInputValue(inputValue, selectedDate ? selectedDate.toString() : '')
+    API.post('/activity', { ...parsedInput, user: userId }, config);
+    setTimeout(() => history.push("/"), 300);
+    handleClose();
+  }
+
   return (
     <Dialog open={open} onClose={handleClose} maxWidth='sm' fullWidth aria-labelledby="form-dialog-title">
       <DialogTitle id="form-dialog-title">
@@ -49,11 +61,7 @@ const AddActivityDialog: React.FC<AddActivityDialogProps> = ({ open, handleClose
           Cancel
         </Button>
         <Button 
-          onClick={() => {
-            handleClose();
-            API.post('/activity', fnParseInputValue(inputValue, selectedDate ? selectedDate.toString() : ''));
-            setTimeout(() => history.push("/"), 300);
-          }} 
+          onClick={handleAddActivity} 
           color="primary"
         >
           Add

@@ -24,7 +24,6 @@ const LoginFormComponent: React.FC = () => {
     API.post('/user/login', { email: emailInput, password: passwordInput })
       .then(res => {
         if (res.data) {
-          console.log(res.data)
           localStorage.setItem('token', res.data.token);
           localStorage.setItem('firstName', res.data.user.firstName);
           localStorage.setItem('userId', res.data.user._id);

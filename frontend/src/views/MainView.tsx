@@ -24,14 +24,17 @@ const MainView: React.FC = () => {
   let history = useHistory();
 
   React.useEffect(() => {
-    const jwtoken = localStorage.getItem('token')
+    const jwtoken = localStorage.getItem('token');
+    const userId = localStorage.getItem('userId')
     const config = {
+      params: { userId },
       headers: { Authorization: `Bearer ${jwtoken}` }
     }; 
     API.get('activity/list', config)
       .then(res => {
-        if (res.status === 200) {
-          setActivityList(res.data || []);
+        if (res.data) {
+          const filterByUser = res.data.filter((user: any) => user.user === userId);
+          setActivityList(filterByUser || []);
         }
       })
       .catch(err => {
