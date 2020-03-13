@@ -10,6 +10,7 @@ import Paper from '@material-ui/core/Paper';
 import Checkbox from '@material-ui/core/Checkbox';
 import EnhancedTableToolbar from './EnhancedTableToolbar';
 import EnhancedTableHead from './EnhancedTableHead';
+import NoDataView from '../../views/NoDataView';
 import { IActivityData } from '../../types';
 
 function descendingComparator<T>(a: T, b: T, orderBy: keyof T) {
@@ -137,6 +138,13 @@ const ContentListComponent: React.FC<IContentListProps> = ({ activityList, setLi
 
   const emptyRows = rowsPerPage - Math.min(rowsPerPage, activityList.length - page * rowsPerPage);
 
+  const filteredListByDate = activityList.filter(activity => {
+    if (selectedDate) {
+      return activity.date.toDateString() === selectedDate.toDateString()                
+    }
+    return false;
+  })
+
   return (
     <div className={classes.root}>
       <Paper className={classes.paper}>
@@ -147,76 +155,80 @@ const ContentListComponent: React.FC<IContentListProps> = ({ activityList, setLi
           selectedDate={selectedDate}
           handleDateChange={(date: Date | null) => handleDateChange(date)}
         />
-        <TableContainer>
-          <Table
-            className={classes.table}
-            aria-labelledby="tableTitle"
-            size='medium'
-            aria-label="enhanced table"
-          >
-            <EnhancedTableHead
-              classes={classes}
-              numSelected={selected.length}
-              order={order}
-              orderBy={orderBy}
-              onSelectAllClick={handleSelectAllClick}
-              onRequestSort={handleRequestSort}
-              rowCount={activityList.length}
-            />
-            <TableBody>
-              {stableSort<any>(activityList, getComparator(order, orderBy))
-                .filter(activity => {
-                  if (selectedDate) {
-                    return activity.date.toDateString() === selectedDate.toDateString()                
-                  }
-                  return false;
-                })
-                .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
-                .map((activity, index) => {
-                  const isItemSelected = isSelected(activity.id);
-                  const labelId = `enhanced-table-checkbox-${index}`;
-
-                  return (
-                    <TableRow
-                      hover
-                      onClick={event => handleClick(event, activity.id)}
-                      role="checkbox"
-                      aria-checked={isItemSelected}
-                      tabIndex={-1}
-                      key={activity.id}
-                      selected={isItemSelected}
-                    >
-                      <TableCell padding="checkbox">
-                        <Checkbox
-                          checked={isItemSelected}
-                          inputProps={{ 'aria-labelledby': labelId }}
-                        />
-                      </TableCell>
-                      <TableCell component="th" id={labelId} scope="row" padding="none">
-                        {activity.activityName}
-                      </TableCell>
-                      <TableCell>{activity.tag}</TableCell>
-                      <TableCell>{activity.duration}</TableCell>
-                    </TableRow>
-                  );
-                })}
-              {emptyRows > 0 && (
-                <TableRow style={{ height: 53 * emptyRows }}>
-                  <TableCell colSpan={6} />
-                </TableRow>
-              )}
-            </TableBody>
-          </Table>
-        </TableContainer>
-        <TablePagination
-          rowsPerPageOptions={[5, 10]}
-          component="div"
-          count={activityList.length}
-          rowsPerPage={rowsPerPage}
-          page={page}
-          onChangePage={handleChangePage}
-          onChangeRowsPerPage={handleChangeRowsPerPage}
-        />
+        {filteredListByDate.length > 0
+          ? (
+            <React.Fragment>
+              <TableContainer>
+                <Table
+                  className={classes.table}
+                  aria-labelledby="tableTitle"
+                  size='medium'
+                  aria-label="enhanced table"
+                >
+                  <EnhancedTableHead
+                    classes={classes}
+                    numSelected={selected.length}
+                    order={order}
+                    orderBy={orderBy}
+                    onSelectAllClick={handleSelectAllClick}
+                    onRequestSort={handleRequestSort}
+                    rowCount={activityList.length}
+                  />
+                  <TableBody>
+                    {stableSort<any>(filteredListByDate, getComparator(order, orderBy))
+                      .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
+                      .map((activity, index) => {
+                        const isItemSelected = isSelected(activity.id);
+                        const labelId = `enhanced-table-checkbox-${index}`;
+                      
+                        return (
+                          <TableRow
+                            hover
+                            onClick={event => handleClick(event, activity.id)}
+                            role="checkbox"
+                            aria-checked={isItemSelected}
+                            tabIndex={-1}
+                            key={activity.id}
+                            selected={isItemSelected}
+                          >
+                            <TableCell padding="checkbox">
+                              <Checkbox
+                                checked={isItemSelected}
+                                inputProps={{ 'aria-labelledby': labelId }}
+                              />
+                            </TableCell>
+                            <TableCell component="th" id={labelId} scope="row" padding="none">
+                              {activity.activityName}
+                            </TableCell>
+                            <TableCell>{activity.tag}</TableCell>
+                            <TableCell>{activity.duration}</TableCell>
+                          </TableRow>
+                        );
+                      })}
+                    {emptyRows > 0 && (
+                      <TableRow style={{ height: 53 * emptyRows }}>
+                        <TableCell colSpan={6} />
+                      </TableRow>
+                    )}
+                  </TableBody>
+                </Table>
+              </TableContainer>
+              <TablePagination
+                rowsPerPageOptions={[5, 10]}
+                component="div"
+                count={activityList.length}
+                rowsPerPage={rowsPerPage}
+                page={page}
+                onChangePage={handleChangePage}
+                onChangeRowsPerPage={handleChangeRowsPerPage}
+              />
+            </React.Fragment>
+          )
+          : (
+            <NoDataView />
+          )
+        }
+        
       </Paper>
     </div>
   );

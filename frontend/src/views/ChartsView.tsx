@@ -3,6 +3,7 @@ import styled from 'styled-components';
 import PieChart from '../components/PieChartComponent';
 import { IActivityData } from '../types';
 import Chip from '@material-ui/core/Chip';
+import NoDataView from './NoDataView';
 
 const ContentContainer = styled.div`
   display: flex;
@@ -67,21 +68,27 @@ const ChartsView: React.FC<IChartsView> = ({ activityList }) => {
 
   return (
     <ContentContainer>
-      <TagContainer>
-        {Object.keys(reducedTagObject).map(tag => (
-          <ChipContainer key={tag}>
-            <Chip 
-              label={`#${tag}`} 
-              color={selectedTag === tag ? 'primary' : 'default'} 
-              onClick={() => setSelectedTag(tag)}
-            />     
-          </ChipContainer>
-        ))}
-      </TagContainer>
-      <PieChart 
-        title='Activity Tracker' 
-        data={reducedTagObject[selectedTag] || []} 
-      />
+      {activityList.length > 0 
+      ? (
+        <React.Fragment>
+          <TagContainer>
+            {Object.keys(reducedTagObject).map(tag => (
+              <ChipContainer key={tag}>
+                <Chip 
+                  label={`#${tag}`} 
+                  color={selectedTag === tag ? 'primary' : 'default'} 
+                  onClick={() => setSelectedTag(tag)}
+                />     
+              </ChipContainer>
+            ))}
+          </TagContainer>
+          <PieChart 
+            title='Activity Tracker' 
+            data={reducedTagObject[selectedTag] || []} 
+          />
+        </React.Fragment>
+      )
+    : (<NoDataView />)}
     </ContentContainer>  
   )
 }
