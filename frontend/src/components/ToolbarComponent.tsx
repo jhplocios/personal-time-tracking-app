@@ -22,7 +22,7 @@ const useStyles = makeStyles((theme: Theme) =>
 );
 
 interface IToolbarProps {
-  setList: (input: IActivityData) => void;
+  setList: (input: Partial<IActivityData>) => void;
 }
 
 const ToolbarComponent: React.FC<IToolbarProps> = ({ setList }) => {

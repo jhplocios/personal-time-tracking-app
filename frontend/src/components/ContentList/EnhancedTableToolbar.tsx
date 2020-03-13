@@ -37,10 +37,10 @@ const useToolbarStyles = makeStyles((theme: Theme) =>
 );
 
 interface EnhancedTableToolbarProps {
-  selectedIds: number[];
+  selectedIds: string[];
   selectedDate: Date | null;
   onDelete: () => void;
-  setList: (ids: number[]) => void;
+  setList: (ids: string[]) => void;
   handleDateChange: (date: Date | null) => void;
 }
 

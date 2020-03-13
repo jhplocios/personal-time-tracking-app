@@ -71,15 +71,15 @@ const useStyles = makeStyles((theme: Theme) =>
 );
 
 interface IContentListProps {
-  activityList: IActivityData[];
-  setList: (ids: number[]) => void;
+  activityList: Partial<IActivityData>[];
+  setList: (ids: string[]) => void;
 }
 
 const ContentListComponent: React.FC<IContentListProps> = ({ activityList, setList }) => {
   const classes = useStyles();
   const [order, setOrder] = React.useState<Order>('asc');
-  const [orderBy, setOrderBy] = React.useState<keyof IActivityData>('activityName');
-  const [selected, setSelected] = React.useState<number[]>([]);
+  const [orderBy, setOrderBy] = React.useState<keyof IActivityData>('name');
+  const [selected, setSelected] = React.useState<string[]>([]);
   const [page, setPage] = React.useState(0);
   const [rowsPerPage, setRowsPerPage] = React.useState(10);
   const [selectedDate, setSelectedDate] = React.useState<Date | null>(
@@ -98,16 +98,16 @@ const ContentListComponent: React.FC<IContentListProps> = ({ activityList, setLi
 
   const handleSelectAllClick = (event: React.ChangeEvent<HTMLInputElement>) => {
     if (event.target.checked) {
-      const newSelecteds = activityList.map(n => n.id);
+      const newSelecteds = activityList.map(n => n._id as string);
       setSelected(newSelecteds);
       return;
     }
     setSelected([]);
   };
 
-  const handleClick = (event: React.MouseEvent<unknown>, id: number) => {
+  const handleClick = (event: React.MouseEvent<unknown>, id: string) => {
     const selectedIndex = selected.indexOf(id);
-    let newSelected: number[] = [];
+    let newSelected: string[] = [];
 
     if (selectedIndex === -1) {
       newSelected = newSelected.concat(selected, id);
@@ -134,13 +134,14 @@ const ContentListComponent: React.FC<IContentListProps> = ({ activityList, setLi
     setPage(0);
   };
 
-  const isSelected = (id: number) => selected.indexOf(id) !== -1;
+  const isSelected = (id: string) => selected.indexOf(id) !== -1;
 
   const emptyRows = rowsPerPage - Math.min(rowsPerPage, activityList.length - page * rowsPerPage);
 
-  const filteredListByDate = activityList.filter(activity => {
+  const filteredListByDate = activityList.filter((activity, i) => {
+    
     if (selectedDate) {
-      return activity.date.toDateString() === selectedDate.toDateString()                
+      return new Date(activity.date as string).toDateString() === selectedDate.toDateString();                
     }
     return false;
   })
@@ -178,17 +179,17 @@ const ContentListComponent: React.FC<IContentListProps> = ({ activityList, setLi
                     {stableSort<any>(filteredListByDate, getComparator(order, orderBy))
                       .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
                       .map((activity, index) => {
-                        const isItemSelected = isSelected(activity.id);
+                        const isItemSelected = isSelected(activity._id);
                         const labelId = `enhanced-table-checkbox-${index}`;
-                      
+                        
                         return (
                           <TableRow
                             hover
-                            onClick={event => handleClick(event, activity.id)}
+                            onClick={event => handleClick(event, activity._id)}
                             role="checkbox"
                             aria-checked={isItemSelected}
                             tabIndex={-1}
-                            key={activity.id}
+                            key={activity._id}
                             selected={isItemSelected}
                           >
                             <TableCell padding="checkbox">
@@ -198,7 +199,7 @@ const ContentListComponent: React.FC<IContentListProps> = ({ activityList, setLi
                               />
                             </TableCell>
                             <TableCell component="th" id={labelId} scope="row" padding="none">
-                              {activity.activityName}
+                              {activity.name}
                             </TableCell>
                             <TableCell>{activity.tag}</TableCell>
                             <TableCell>{activity.duration}</TableCell>

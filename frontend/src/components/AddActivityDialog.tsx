@@ -10,7 +10,7 @@ import { IActivityData } from '../types';
 
 interface AddActivityDialogProps {
   open: boolean;
-  setList: (input: IActivityData) => void;
+  setList: (input: Partial<IActivityData>) => void;
   handleClose: () => void;
 }
 
@@ -58,7 +58,7 @@ const AddActivityDialog: React.FC<AddActivityDialogProps> = ({ open, setList, ha
         </Button>
         <Button onClick={() => {
           handleClose();
-          setList(parseInputValue(inputValue, selectedDate));
+          setList(parseInputValue(inputValue, selectedDate ? selectedDate.toString() : ''));
         }} color="primary">
           Add
         </Button>
@@ -67,12 +67,12 @@ const AddActivityDialog: React.FC<AddActivityDialogProps> = ({ open, setList, ha
   );
 }
 
-function parseInputValue(input: string, date: Date | null): IActivityData {
+function parseInputValue(input: string, date: string): Partial<IActivityData> {
   const temp = input.split(" ");
   let count = 0;
   let duration = '';
   let tag = '';
-  let activityName = '';
+  let name = '';
 
   temp.forEach(word => {
     if (count === 0) {
@@ -87,16 +87,15 @@ function parseInputValue(input: string, date: Date | null): IActivityData {
         count++;
       }
     } else if (count === 2) {
-      activityName += word + " ";
+      name += word + " ";
     }
   });
 
   return {
-    id: Math.random(),
     duration: Number(duration),
     tag,
-    activityName: activityName.trimEnd(),
-    date: date || new Date(),
+    name: name.trimEnd(),
+    date: date.toString() || new Date().toString(),
   } 
 }
 

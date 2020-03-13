@@ -15,7 +15,7 @@ const PieChartComponent: React.FC<IChartsProps> = ({ title, data }) => {
     return [
       ...acc,
       [
-        cur.activityName,
+        cur.name,
         cur.duration / totalDuration
       ]
     ];

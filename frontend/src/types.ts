@@ -1,13 +1,7 @@
 export interface IActivityData {
-  id: number;
+  _id: string;
   duration: number;
   tag: string;
-  activityName: string;
-  date: Date;
-}
-
-export interface IActivityInput {
-  duration: number;
-  tag: string;
-  activityName: string;
+  name: string;
+  date: string;
 }

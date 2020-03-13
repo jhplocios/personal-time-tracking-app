@@ -43,7 +43,7 @@ const useStyles = makeStyles((theme: Theme) =>
 );
 
 const headCells: HeadCell[] = [
-  { id: 'activityName', numeric: false, disablePadding: true, label: 'Activity Name' },
+  { id: 'name', numeric: false, disablePadding: true, label: 'Activity Name' },
   { id: 'tag', numeric: false, disablePadding: false, label: 'Tag' },
   { id: 'duration', numeric: true, disablePadding: false, label: 'Duration (hrs)' },
 ];
@@ -68,12 +68,12 @@ function EnhancedTableHead(props: EnhancedTableProps) {
     <TableHead>
       <TableRow>
         <TableCell padding="checkbox">
-          <Checkbox
+          {/* <Checkbox
             indeterminate={numSelected > 0 && numSelected < rowCount}
             checked={rowCount > 0 && numSelected === rowCount}
             onChange={onSelectAllClick}
             inputProps={{ 'aria-label': 'select all desserts' }}
-          />
+          /> */}
         </TableCell>
         {headCells.map(headCell => (
           <TableCell

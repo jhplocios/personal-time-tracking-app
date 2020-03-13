@@ -24,7 +24,7 @@ const ChipContainer = styled.div`
 `
 
 interface IChartsView {
-  activityList: IActivityData[];
+  activityList: Partial<IActivityData>[];
 }
 
 const ChartsView: React.FC<IChartsView> = ({ activityList }) => {
@@ -32,32 +32,32 @@ const ChartsView: React.FC<IChartsView> = ({ activityList }) => {
 
   React.useEffect(() => {
     if (activityList.length > 0) {
-      setSelectedTag(activityList[0].tag);
+      setSelectedTag(activityList[0].tag as string);
     }
   }, [activityList])
 
   const reducedTagObject = activityList.reduce((acc: any, cur) => {
-    if (!acc[cur.tag]) {
-      acc[cur.tag] = [{
-        id: cur.id,
+    if (!acc[cur.tag as string]) {
+      acc[cur.tag as string] = [{
+        id: cur._id,
         duration: cur.duration,
         tag: cur.tag,
-        activityName: cur.activityName,
+        name: cur.name,
         date: cur.date
       }];
       return acc;
     } else {
-      const sameActivityIndex = acc[cur.tag].findIndex((a: IActivityData) => a.activityName === cur.activityName);
+      const sameActivityIndex = acc[cur.tag as string].findIndex((a: IActivityData) => a.name === cur.name);
       if (sameActivityIndex > -1) {
-        acc[cur.tag][sameActivityIndex].duration += cur.duration;
+        acc[cur.tag as string][sameActivityIndex].duration += cur.duration;
       } else {
-        acc[cur.tag] = [
-          ...acc[cur.tag],
+        acc[cur.tag as string] = [
+          ...acc[cur.tag as string],
           {
-            id: cur.id,
+            id: cur._id,
             duration: cur.duration,
             tag: cur.tag,
-            activityName: cur.activityName,
+            name: cur.name,
             date: cur.date
           }
         ]
