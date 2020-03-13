@@ -19,6 +19,10 @@ const FormContainer = styled.div`
 const LoginView: React.FC = () => {
   const [isNewUser, setIsNewUser] = React.useState(false);
 
+  React.useEffect(() => {
+    localStorage.clear();
+  }, []);
+
   return (
     <Container>
       <Toolbar isNewUser={isNewUser} setUser={() => setIsNewUser(!isNewUser)} isLoggedOut />

@@ -11,8 +11,9 @@ const Card = styled.div`
   border-radius: 5px;
 `
 
-const StyledTextField = styled(TextField)`
-  margin-bottom: 10px;
+const Spacer = styled.div`
+  height: 10px;
+  width: 100%;
 `
 
 const SigninFormComponent: React.FC = () => {
@@ -43,7 +44,7 @@ const SigninFormComponent: React.FC = () => {
 
   return (
     <Card>
-      <StyledTextField
+      <TextField
         onChange={(event) => setfirstNameInput(event.target.value)}
         required
         id="outlined-required"
@@ -51,7 +52,8 @@ const SigninFormComponent: React.FC = () => {
         variant="outlined"
         fullWidth
       />
-      <StyledTextField
+      <Spacer />
+      <TextField
         onChange={(event) => setLastNameInput(event.target.value)}
         required
         id="outlined-required"
@@ -59,7 +61,8 @@ const SigninFormComponent: React.FC = () => {
         variant="outlined"
         fullWidth
       />
-      <StyledTextField
+      <Spacer />
+      <TextField
         onChange={(event) => setRoleInput(event.target.value)}
         required
         id="outlined-required"
@@ -67,7 +70,8 @@ const SigninFormComponent: React.FC = () => {
         variant="outlined"
         fullWidth
       />
-      <StyledTextField
+      <Spacer />
+      <TextField
         onChange={(event) => setEmailInput(event.target.value)}
         required
         id="outlined-required"
@@ -75,7 +79,8 @@ const SigninFormComponent: React.FC = () => {
         variant="outlined"
         fullWidth
       />
-      <StyledTextField
+      <Spacer />
+      <TextField
         onChange={(event) => setPasswordInput(event.target.value)}
         required
         id="outlined-required"
@@ -86,6 +91,7 @@ const SigninFormComponent: React.FC = () => {
         variant="outlined"
         fullWidth
       />
+      <Spacer />
       <Button 
         variant="contained"
         color="primary"

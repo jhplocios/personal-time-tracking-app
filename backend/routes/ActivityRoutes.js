@@ -16,7 +16,6 @@ router.get('/list', auth, async (req, res) => {
 // Create one activity
 router.post('/', auth, async (req, res) => {
   try {
-    console.log(req.body)
     const activity = new activityModel(req.body);
     await activity.save();
     res.send(activity);
