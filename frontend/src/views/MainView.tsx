@@ -1,5 +1,5 @@
 import React from 'react';
-import { useLocation } from "react-router-dom";
+import { useLocation, useHistory } from "react-router-dom";
 import styled from 'styled-components';
 import Tabs from '@material-ui/core/Tabs';
 import Tab from '@material-ui/core/Tab';
@@ -21,13 +21,24 @@ const MainView: React.FC = () => {
   const [value, setValue] = React.useState(0);
   const [renderView, setRenderView] = React.useState('list');
   let location = useLocation();
+  let history = useHistory();
 
   React.useEffect(() => {
-    API.get('activity/list')
+    const jwtoken = localStorage.getItem('token')
+    const config = {
+      headers: { Authorization: `Bearer ${jwtoken}` }
+    }; 
+    API.get('activity/list', config)
       .then(res => {
-        setActivityList(res.data || [])
+        if (res.status === 200) {
+          setActivityList(res.data || []);
+        }
       })
-  }, [location])
+      .catch(err => {
+        history.push('/login');
+        console.log(err)
+      })
+  }, [location, history])
 
   const handleChange = (event: React.ChangeEvent<{}>, newValue: number) => {
     setValue(newValue);

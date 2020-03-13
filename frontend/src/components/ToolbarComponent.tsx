@@ -1,10 +1,12 @@
 import React from 'react';
+import { useHistory } from "react-router-dom";
 import AppBar from '@material-ui/core/AppBar';
 import Toolbar from '@material-ui/core/Toolbar';
 import Typography from '@material-ui/core/Typography';
 import Button from '@material-ui/core/Button';
 import { createStyles, makeStyles, Theme } from '@material-ui/core/styles';
 import AddActivityDialog from './AddActivityDialog';
+import API from '../utils/api';
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -20,10 +22,13 @@ const useStyles = makeStyles((theme: Theme) =>
   }),
 );
 
-interface IToolbarProps {}
+interface IToolbarProps {
+  isLoggedOut?: boolean;
+}
 
-const ToolbarComponent: React.FC<IToolbarProps> = () => {
+const ToolbarComponent: React.FC<IToolbarProps> = ({ isLoggedOut }) => {
   const [openAddDialog, setOpenAddDialog] = React.useState(false);
+  let history = useHistory();
 
   const handleClickOpen = () => {
     setOpenAddDialog(true);
@@ -32,6 +37,18 @@ const ToolbarComponent: React.FC<IToolbarProps> = () => {
   const handleClose = () => {
     setOpenAddDialog(false);
   };
+
+  const handleLogOut = () => {
+    const jwtoken = localStorage.getItem('token')
+    const config = {
+      headers: { Authorization: `Bearer ${jwtoken}` }
+    }; 
+    API.post('/user/me/logout', {}, config)
+      .then(res => res)
+      .catch(err => console.log(err))
+    setTimeout(() => history.push("/personal-time-tracker"), 300);
+  }
+
   const classes = useStyles();
 
   return (
@@ -41,7 +58,9 @@ const ToolbarComponent: React.FC<IToolbarProps> = () => {
           <Typography variant="h6" className={classes.title}>
             Personal Time Tracker App
           </Typography>
-          <Button color="inherit" onClick={handleClickOpen}>Add Activity</Button>
+          {!isLoggedOut && <Button color="inherit" onClick={handleClickOpen}>Add Activity</Button>}
+          {isLoggedOut && <Button color="inherit">Sign up</Button>}
+          {!isLoggedOut && <Button color="inherit" onClick={handleLogOut}>Log out</Button>}
         </Toolbar>
       </AppBar>
       <AddActivityDialog 
