@@ -1,15 +1,15 @@
 import React from 'react';
-import Toolbar from '../components/ToolbarComponent';
-import ContentList from '../components/ContentList/ContentListComponent';
-import { IActivityData } from '../types';
+import { useLocation } from "react-router-dom";
 import styled from 'styled-components';
 import Tabs from '@material-ui/core/Tabs';
 import Tab from '@material-ui/core/Tab';
 import FormatListNumberedIcon from '@material-ui/icons/FormatListNumbered';
 import EqualizerIcon from '@material-ui/icons/Equalizer';
+import Toolbar from '../components/ToolbarComponent';
+import ContentList from '../components/ContentList/ContentListComponent';
 import ChartsView from './ChartsView';
 import API from '../utils/api';
-import { useLocation } from "react-router-dom";
+import { IActivityData } from '../types';
 
 const ContentContainer = styled.div`
   padding: 20px;
@@ -33,33 +33,9 @@ const MainView: React.FC = () => {
     setValue(newValue);
   };
 
-  const handleSetList = (input: Partial<IActivityData>) => {
-      setActivityList(prevState => {
-        if (prevState) {
-          return [...prevState, input];
-        }
-        return [input];
-      })
-  }
-
-  const deleteFromList = (id: string) => {
-    setActivityList(prevState => {
-      if (prevState) {
-        let newList: Partial<IActivityData>[] = prevState;
-        const deleteIndex = newList.findIndex(state => state._id === id);
-        newList = [
-          ...newList.slice(0, deleteIndex),
-          ...newList.slice(deleteIndex + 1)
-        ]
-        return newList;
-      }
-      return prevState;
-    })
-  }
-
   return (
     <React.Fragment>
-      <Toolbar setList={handleSetList}/>
+      <Toolbar />
       <Tabs
         value={value}
         onChange={handleChange}
@@ -73,7 +49,7 @@ const MainView: React.FC = () => {
       </Tabs>
       {renderView === 'list' && (
         <ContentContainer>
-          <ContentList activityList={activityList || []} setList={deleteFromList} />
+          <ContentList activityList={activityList || []} />
         </ContentContainer>
       )}
       {renderView === 'charts' && <ChartsView activityList={activityList || []}/>}     

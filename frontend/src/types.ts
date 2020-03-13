@@ -5,3 +5,12 @@ export interface IActivityData {
   name: string;
   date: string;
 }
+
+export type Order = 'asc' | 'desc';
+
+export interface HeadCell {
+  disablePadding: boolean;
+  id: keyof IActivityData;
+  label: string;
+  numeric: boolean;
+}

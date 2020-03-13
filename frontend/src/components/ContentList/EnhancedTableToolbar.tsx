@@ -1,15 +1,15 @@
 import React from 'react';
+import { useHistory } from "react-router-dom";
 import clsx from 'clsx';
+import styled from 'styled-components';
 import { createStyles, lighten, makeStyles, Theme } from '@material-ui/core/styles';
 import Toolbar from '@material-ui/core/Toolbar';
 import Typography from '@material-ui/core/Typography';
 import IconButton from '@material-ui/core/IconButton';
 import Tooltip from '@material-ui/core/Tooltip';
 import DeleteIcon from '@material-ui/icons/Delete';
-import styled from 'styled-components';
 import DateInput from '../DateInputComponent';
 import API from '../../utils/api';
-import { useHistory } from "react-router-dom";
 
 const SubHeaderContainer = styled.div`
   display: flex;

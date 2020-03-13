@@ -5,7 +5,6 @@ import Typography from '@material-ui/core/Typography';
 import Button from '@material-ui/core/Button';
 import { createStyles, makeStyles, Theme } from '@material-ui/core/styles';
 import AddActivityDialog from './AddActivityDialog';
-import { IActivityData } from '../types';
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -21,13 +20,10 @@ const useStyles = makeStyles((theme: Theme) =>
   }),
 );
 
-interface IToolbarProps {
-  setList: (input: Partial<IActivityData>) => void;
-}
+interface IToolbarProps {}
 
-const ToolbarComponent: React.FC<IToolbarProps> = ({ setList }) => {
+const ToolbarComponent: React.FC<IToolbarProps> = () => {
   const [openAddDialog, setOpenAddDialog] = React.useState(false);
-
 
   const handleClickOpen = () => {
     setOpenAddDialog(true);

@@ -11,38 +11,8 @@ import Checkbox from '@material-ui/core/Checkbox';
 import EnhancedTableToolbar from './EnhancedTableToolbar';
 import EnhancedTableHead from './EnhancedTableHead';
 import NoDataView from '../../views/NoDataView';
-import { IActivityData } from '../../types';
-
-function descendingComparator<T>(a: T, b: T, orderBy: keyof T) {
-  if (b[orderBy] < a[orderBy]) {
-    return -1;
-  }
-  if (b[orderBy] > a[orderBy]) {
-    return 1;
-  }
-  return 0;
-}
-
-type Order = 'asc' | 'desc';
-
-function getComparator<Key extends keyof any>(
-  order: Order,
-  orderBy: Key,
-): (a: { [key in Key]: number | string }, b: { [key in Key]: number | string }) => number {
-  return order === 'desc'
-    ? (a, b) => descendingComparator(a, b, orderBy)
-    : (a, b) => -descendingComparator(a, b, orderBy);
-}
-
-function stableSort<T>(array: T[], comparator: (a: T, b: T) => number) {
-  const stabilizedThis = array.map((el, index) => [el, index] as [T, number]);
-  stabilizedThis.sort((a, b) => {
-    const order = comparator(a[0], b[0]);
-    if (order !== 0) return order;
-    return a[1] - b[1];
-  });
-  return stabilizedThis.map(el => el[0]);
-}
+import { IActivityData, Order } from '../../types';
+import { fnStableSort, fnGetComparator } from '../../utils/helpers';
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -72,10 +42,9 @@ const useStyles = makeStyles((theme: Theme) =>
 
 interface IContentListProps {
   activityList: Partial<IActivityData>[];
-  setList: (id: string) => void;
 }
 
-const ContentListComponent: React.FC<IContentListProps> = ({ activityList, setList }) => {
+const ContentListComponent: React.FC<IContentListProps> = ({ activityList }) => {
   const classes = useStyles();
   const [order, setOrder] = React.useState<Order>('asc');
   const [orderBy, setOrderBy] = React.useState<keyof IActivityData>('name');
@@ -96,32 +65,7 @@ const ContentListComponent: React.FC<IContentListProps> = ({ activityList, setLi
     setOrderBy(property);
   };
 
-  // const handleSelectAllClick = (event: React.ChangeEvent<HTMLInputElement>) => {
-  //   if (event.target.checked) {
-  //     const newSelecteds = activityList.map(n => n._id as string);
-  //     setSelected(newSelecteds);
-  //     return;
-  //   }
-  //   setSelected([]);
-  // };
-
   const handleClick = (event: React.MouseEvent<unknown>, id: string) => {
-    // const selectedIndex = selected.indexOf(id);
-    // let newSelected: string[] = [];
-
-    // if (selectedIndex === -1) {
-    //   newSelected = newSelected.concat(selected, id);
-    // } else if (selectedIndex === 0) {
-    //   newSelected = newSelected.concat(selected.slice(1));
-    // } else if (selectedIndex === selected.length - 1) {
-    //   newSelected = newSelected.concat(selected.slice(0, -1));
-    // } else if (selectedIndex > 0) {
-    //   newSelected = newSelected.concat(
-    //     selected.slice(0, selectedIndex),
-    //     selected.slice(selectedIndex + 1),
-    //   );
-    // }
-
     setSelected(id);
   };
 
@@ -139,7 +83,6 @@ const ContentListComponent: React.FC<IContentListProps> = ({ activityList, setLi
   const emptyRows = rowsPerPage - Math.min(rowsPerPage, activityList.length - page * rowsPerPage);
 
   const filteredListByDate = activityList.filter((activity, i) => {
-    
     if (selectedDate) {
       return new Date(activity.date as string).toDateString() === selectedDate.toDateString();                
     }
@@ -154,79 +97,71 @@ const ContentListComponent: React.FC<IContentListProps> = ({ activityList, setLi
           selectedDate={selectedDate}
           handleDateChange={(date: Date | null) => handleDateChange(date)}
         />
-        {filteredListByDate.length > 0
-          ? (
-            <React.Fragment>
-              <TableContainer>
-                <Table
-                  className={classes.table}
-                  aria-labelledby="tableTitle"
-                  size='medium'
-                  aria-label="enhanced table"
-                >
-                  <EnhancedTableHead
-                    classes={classes}
-                    numSelected={selected.length}
-                    order={order}
-                    orderBy={orderBy}
-                    onRequestSort={handleRequestSort}
-                    rowCount={activityList.length}
-                  />
-                  <TableBody>
-                    {stableSort<any>(filteredListByDate, getComparator(order, orderBy))
-                      .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
-                      .map((activity, index) => {
-                        const isItemSelected = isSelected(activity._id);
-                        const labelId = `enhanced-table-checkbox-${index}`;
-                        
-                        return (
-                          <TableRow
-                            hover
-                            onClick={event => handleClick(event, activity._id)}
-                            role="checkbox"
-                            aria-checked={isItemSelected}
-                            tabIndex={-1}
-                            key={activity._id}
-                            selected={isItemSelected}
-                          >
-                            <TableCell padding="checkbox">
-                              <Checkbox
-                                checked={isItemSelected}
-                                inputProps={{ 'aria-labelledby': labelId }}
-                              />
-                            </TableCell>
-                            <TableCell component="th" id={labelId} scope="row" padding="none">
-                              {activity.name}
-                            </TableCell>
-                            <TableCell>{activity.tag}</TableCell>
-                            <TableCell>{activity.duration}</TableCell>
-                          </TableRow>
-                        );
-                      })}
-                    {emptyRows > 0 && (
-                      <TableRow style={{ height: 53 * emptyRows }}>
-                        <TableCell colSpan={6} />
-                      </TableRow>
-                    )}
-                  </TableBody>
-                </Table>
-              </TableContainer>
-              <TablePagination
-                rowsPerPageOptions={[5, 10]}
-                component="div"
-                count={activityList.length}
-                rowsPerPage={rowsPerPage}
-                page={page}
-                onChangePage={handleChangePage}
-                onChangeRowsPerPage={handleChangeRowsPerPage}
-              />
-            </React.Fragment>
-          )
-          : (
-            <NoDataView />
-          )
-        }
-        
+        {filteredListByDate.length > 0 ? (
+          <React.Fragment>
+            <TableContainer>
+              <Table
+                className={classes.table}
+                aria-labelledby="tableTitle"
+                size='medium'
+                aria-label="enhanced table"
+              >
+                <EnhancedTableHead
+                  classes={classes}
+                  order={order}
+                  orderBy={orderBy}
+                  onRequestSort={handleRequestSort}
+                />
+                <TableBody>
+                  {fnStableSort<any>(filteredListByDate, fnGetComparator(order, orderBy))
+                    .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
+                    .map((activity, index) => {
+                      const isItemSelected = isSelected(activity._id);
+                      const labelId = `enhanced-table-checkbox-${index}`;
+                      
+                      return (
+                        <TableRow
+                          hover
+                          onClick={event => handleClick(event, activity._id)}
+                          role="checkbox"
+                          aria-checked={isItemSelected}
+                          tabIndex={-1}
+                          key={activity._id}
+                          selected={isItemSelected}
+                        >
+                          <TableCell padding="checkbox">
+                            <Checkbox
+                              checked={isItemSelected}
+                              inputProps={{ 'aria-labelledby': labelId }}
+                            />
+                          </TableCell>
+                          <TableCell component="th" id={labelId} scope="row" padding="none">
+                            {activity.name}
+                          </TableCell>
+                          <TableCell>{activity.tag}</TableCell>
+                          <TableCell>{activity.duration}</TableCell>
+                        </TableRow>
+                      );
+                    })}
+                  {emptyRows > 0 && (
+                    <TableRow style={{ height: 53 * emptyRows }}>
+                      <TableCell colSpan={6} />
+                    </TableRow>
+                  )}
+                </TableBody>
+              </Table>
+            </TableContainer>
+            <TablePagination
+              rowsPerPageOptions={[5, 10]}
+              component="div"
+              count={activityList.length}
+              rowsPerPage={rowsPerPage}
+              page={page}
+              onChangePage={handleChangePage}
+              onChangeRowsPerPage={handleChangeRowsPerPage}
+            />
+          </React.Fragment>
+        ) : (<NoDataView />)}
       </Paper>
     </div>
   );
