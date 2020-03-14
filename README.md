@@ -1,6 +1,6 @@
-Personal Time Tracking Web App
+## Personal Time Tracking Web App
 
-An Overview
+### An Overview
 
 Personal Time Tracking App is a simple tool to help you keep track, monitor and measure your daily activities.
 Its easy to forget what you did these past days due to deadlines and fast-paced environment. That is why keeping a record 
@@ -11,18 +11,22 @@ This app uses React and Typescript in the frontend and Node and Javascript in th
 I used create-react-app as a boilerplate for the frontend code.
 The data is persisted to MongoDb Atlas. 
 
-To run the development, just follow these scripts:
+### To run the development, just follow these scripts:
 
-frontend:
+frontend: 
+```
 cd /frontend
-npm i
+npm i 
 npm start
+```
   
 backend:
+```
 cd /backend
 npm i
 npm run dev
+```
 
-This app is deployed in heroku and you can access it thru these URL:
+### This app is deployed in heroku and you can access it thru these URL:
 frontend: https://personal-time-tracker.herokuapp.com/login
 backend: https://personal-time-tracker-server.herokuapp.com/
