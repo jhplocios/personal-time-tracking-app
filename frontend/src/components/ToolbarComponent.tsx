@@ -48,6 +48,7 @@ const ToolbarComponent: React.FC<IToolbarProps> = ({ isLoggedOut, setUser, isNew
     API.post('/user/me/logout', {}, config)
       .then(res => {
         history.push("/personal-time-tracker");
+        localStorage.clear();
       })
       .catch(err => console.log(err))
   }
