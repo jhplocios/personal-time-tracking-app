@@ -57,7 +57,7 @@ const EnhancedTableToolbar = (props: EnhancedTableToolbarProps) => {
     API.delete(`/activity/${selectedId}`, config)
       .then(res => {
         if (res) {
-          setTimeout(() => history.push("/"), 300);
+          history.push("/");
         }
       })
       .catch(err => console.log(err))

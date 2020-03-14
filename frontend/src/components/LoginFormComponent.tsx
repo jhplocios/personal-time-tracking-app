@@ -28,7 +28,7 @@ const LoginFormComponent: React.FC = () => {
           localStorage.setItem('token', res.data.token);
           localStorage.setItem('firstName', res.data.user.firstName);
           localStorage.setItem('userId', res.data.user._id);
-          setTimeout(() => history.push("/personal-time-tracker"), 1000);
+          history.push("/personal-time-tracker");
         }
       })
       .catch(err => console.log(err))

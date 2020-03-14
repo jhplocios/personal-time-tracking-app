@@ -36,7 +36,7 @@ const AddActivityDialog: React.FC<AddActivityDialogProps> = ({ open, handleClose
     API.post('/activity', { ...parsedInput, user: userId }, config)
       .then(res => {
         if (res) {
-          setTimeout(() => history.push("/"), 300);
+          history.push("/");
         }
       })
       .catch(err => console.log(err))

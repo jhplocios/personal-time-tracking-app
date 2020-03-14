@@ -46,9 +46,10 @@ const ToolbarComponent: React.FC<IToolbarProps> = ({ isLoggedOut, setUser, isNew
       headers: { Authorization: `Bearer ${jwtoken}` }
     }; 
     API.post('/user/me/logout', {}, config)
-      .then(res => res)
+      .then(res => {
+        history.push("/personal-time-tracker");
+      })
       .catch(err => console.log(err))
-    setTimeout(() => history.push("/personal-time-tracker"), 300);
   }
 
   const classes = useStyles();
