@@ -54,8 +54,13 @@ const EnhancedTableToolbar = (props: EnhancedTableToolbarProps) => {
     const config = {
       headers: { Authorization: `Bearer ${jwtoken}` }
     }; 
-    API.delete(`/activity/${selectedId}`, config);
-    setTimeout(() => history.push("/"), 200);
+    API.delete(`/activity/${selectedId}`, config)
+      .then(res => {
+        if (res) {
+          setTimeout(() => history.push("/"), 300);
+        }
+      })
+      .catch(err => console.log(err))
   }
 
   return (

@@ -1,5 +1,6 @@
 import axios from 'axios';
 
 export default axios.create({
-  baseURL: `http://localhost:5000/`
+  baseURL: 'https://personal-time-tracker-server.herokuapp.com/'
+  // baseURL: `http://localhost:5000/`
 });

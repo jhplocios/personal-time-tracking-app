@@ -33,8 +33,13 @@ const AddActivityDialog: React.FC<AddActivityDialogProps> = ({ open, handleClose
       headers: { Authorization: `Bearer ${jwtoken}` }
     }; 
     const parsedInput = fnParseInputValue(inputValue, selectedDate ? selectedDate.toString() : '')
-    API.post('/activity', { ...parsedInput, user: userId }, config);
-    setTimeout(() => history.push("/"), 300);
+    API.post('/activity', { ...parsedInput, user: userId }, config)
+      .then(res => {
+        if (res) {
+          setTimeout(() => history.push("/"), 300);
+        }
+      })
+      .catch(err => console.log(err))
     handleClose();
   }
 
